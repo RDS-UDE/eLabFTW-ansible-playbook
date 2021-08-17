@@ -1,0 +1,24 @@
+---
+# use dfn certificate
+- name: copy certificate
+  copy:
+    src: "ssl/{{ apache2_sslCertFile }}"
+    dest: "/etc/ssl/ssl_ude/"
+    mode: 0644
+  notify: restart webserver
+
+# WARNING: The private key should be stored in an encrypted file
+- name: copy private key
+  copy:
+    src: "ssl/{{ apache2_sslKeyFile }}"
+    dest: "/etc/ssl/ssl_ude/"
+    mode: 0644
+    decrypt: yes  # yes is the default value, kept explicitly for clarity
+  notify: restart webserver
+
+- name: copy chain file
+  copy:
+    src: "ssl/chain.pem"
+    dest: "/etc/ssl/ssl_ude/"
+    mode: 0644
+  notify: restart webserver

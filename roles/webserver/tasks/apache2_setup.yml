@@ -1,0 +1,67 @@
+---
+# tasks file for apache2
+- name: install apache
+  apt:
+    name: apache2
+    update_cache: yes
+    cache_valid_time: 3600  # update cache when it is older than 6 minutes
+    state: latest
+
+# Make sure web server is restarted (if necessary) to activate the proxy module
+- name: enable proxy module
+  community.general.apache2_module:
+    name: proxy
+    state: present
+  register: proxy_module_enabled
+
+- name: restart apache2
+  command: systemctl restart apache2
+  when: proxy_module_enabled is changed
+
+- name: enable headers module
+  community.general.apache2_module:
+    name: headers
+    state: present
+  register: headers_module_enabled
+
+- name: restart apache2
+  command: systemctl restart apache2
+  when: headers_module_enabled is changed
+
+- name: enable apache modules
+  community.general.apache2_module:
+    name: "{{ item }}"
+    state: present
+    ignore_configcheck: yes
+  with_items:
+    - rewrite
+    - proxy_http
+    - proxy_fcgi
+    - ssl
+  notify: restart webserver
+
+- name: copy default http template
+  template:
+    src: 000-default.conf.template
+    dest: /etc/apache2/sites-available/000-default.conf
+    owner: www-data
+    group: www-data
+    mode: 0644
+  notify: restart webserver
+  register: http_template_copied
+
+- name: restart apache2
+  command: systemctl restart apache2
+  when: http_template_copied is changed
+
+- name: copy security.conf template
+  template:
+    src: apache2_security.conf.template
+    dest: /etc/apache2/conf-available/security.conf
+  notify: restart webserver
+
+- name: copy apache2.conf template
+  template:
+    src: apache2.conf.template
+    dest: /etc/apache2/apache2.conf
+  notify: restart webserver

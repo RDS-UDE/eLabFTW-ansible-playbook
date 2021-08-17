@@ -1,0 +1,58 @@
+---
+# use letsencrypt when no dfn certificate
+
+- name: create publicly available folder to place the challenge
+  file:
+    path: "/var/www/html/.well-known/acme-challenge/"
+    state: directory
+
+- name: generate account key
+  openssl_privatekey:
+    path: "/etc/ssl/ssl_ude/account-key.pem"
+    size: 4096
+
+- name: generate signing key
+  openssl_privatekey:
+    path: "/etc/ssl/ssl_ude/{{ apache2_sslKeyFile  }}"
+    size: 4096
+
+- name: generate csr
+  openssl_csr:
+    path: "/etc/ssl/ssl_ude/{{ apache2_sslKeyFile }}.csr"
+    privatekey_path: "/etc/ssl/ssl_ude/{{ apache2_sslKeyFile }}"
+    common_name: "{{ ansible_nodename }}"
+
+- name: create acme challenge
+  acme_certificate:
+    acme_version: 2
+    terms_agreed: yes
+    account_key_src: "/etc/ssl/ssl_ude/account-key.pem"
+    src: "/etc/ssl/ssl_ude/{{ apache2_sslKeyFile }}.csr"
+    cert: "/etc/ssl/ssl_ude/{{ apache2_sslCertFile }}"
+    challenge: http-01
+    acme_directory: https://acme-v02.api.letsencrypt.org/directory
+    remaining_days: 30
+  register: challenge
+
+- name: save lets encrypt challenges in /var/www/html
+  copy:
+    dest: "/var/www/html/{{ challenge['challenge_data'][item]['http-01']['resource'] }}"
+    content: "{{ challenge['challenge_data'][item]['http-01']['resource_value'] }}"
+  with_items: "{{ [ansible_nodename] + apache2_dns_altname }}"
+  when:
+    - challenge is changed
+
+- name: validate acme challenge
+  acme_certificate:
+    acme_version: 2
+    account_key_src: "/etc/ssl/ssl_ude/account-key.pem"
+    src: "/etc/ssl/ssl_ude/{{ apache2_sslKeyFile }}.csr"
+    cert: "/etc/ssl/ssl_ude/{{ apache2_sslCertFile }}"
+    chain: "/etc/ssl/ssl_ude/chain.pem"
+    challenge: http-01
+    acme_directory: https://acme-v02.api.letsencrypt.org/directory
+    remaining_days: 30
+    data: "{{ challenge }}"
+  notify: restart webserver
+  when:
+    - challenge is changed

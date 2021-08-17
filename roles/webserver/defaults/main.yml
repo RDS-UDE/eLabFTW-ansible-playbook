@@ -1,0 +1,11 @@
+---
+# defaults file for apache2
+
+# Some of these settings might be overidden in the host or group vars
+apache2_dns_altname: []
+use_webserver: apache2
+# TODO: Replace the server admin with your name of choice
+# either here or in the group_var.
+# Note that the group variable will overide changes made here.
+apache2_serverAdmin: admin@example.com
+apache2_documentRoot: /var/www/html/

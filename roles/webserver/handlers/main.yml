@@ -1,0 +1,11 @@
+---
+# handlers file for apache2
+- name: restart webserver
+  ansible.builtin.service:
+    name: "{{ use_webserver }}"
+    state: restarted
+
+- name: restart php-fpm
+  ansible.builtin.service:
+    name: "php{{ php_version }}-fpm.service"
+    state: restarted

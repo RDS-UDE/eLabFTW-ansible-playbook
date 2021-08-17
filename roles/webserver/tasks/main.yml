@@ -1,0 +1,14 @@
+---
+
+# This rule can be extended to support multiple web servers.
+# Currently, only apache2 is supported.
+- include: apache2_setup.yml
+  when: use_webserver == "apache2"
+
+# ssl.yml decides if lets_encrypt or DFN is used
+- include: ssl.yml
+
+- name: make sure web server is running
+  service:
+    name: "{{ use_webserver }}"
+    state: started

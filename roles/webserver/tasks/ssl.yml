@@ -1,0 +1,26 @@
+---
+# Note that the SSL config is performed by the elabftw role
+# since these changes are specific for eLabFTW
+
+- name: create ssl_ude folder
+  file:
+    path: /etc/ssl/ssl_ude
+    state: directory
+    mode: 0755
+
+- include: ssl_lets_encrypt.yml
+  when: apache2_use_lets_encrypt == true
+
+- include: ssl_dfn.yml
+  when: apache2_use_lets_encrypt == false
+
+- name: apache2 create a symbolic link
+  ansible.builtin.file:
+    src: /etc/apache2/sites-available/default-ssl.conf
+    dest: /etc/apache2/sites-enabled/default-ssl.conf
+    owner: www-data
+    group: www-data
+    state: link
+    mode: 0644
+  notify: restart webserver
+  when: use_webserver == "apache2"
