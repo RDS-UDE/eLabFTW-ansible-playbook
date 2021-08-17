@@ -1,0 +1,34 @@
+---
+
+- name: HTTP is open
+  ufw:
+    rule: allow
+    port: "80"
+    proto: tcp
+
+- name: HTTPS is open
+  ufw:
+    rule: allow
+    port: "443"
+    proto: tcp
+
+# Allow ssh connections only from this list of specified servers.
+# You need at least the Ansible control node
+- name: Allow SSH in UFW
+  ufw:
+    rule: allow
+    port: "22"
+    proto: tcp
+    from_ip: "{{ item.ip }}"
+    comment: "{{ item.comment }}"
+  with_items:
+    # TODO: Enter the ip of the ansible control node
+    - {ip: xxx.xxx.xxx.xxx/32, comment: "Ansible control node"}
+    # This is an example for an additional jump host used to connect
+    # to the node for later work (without going through the control node).
+    # - { ip: xxx.xxx.xxx.xxx/32, comment: "Jump host" }
+
+- name: Activate UFW
+  ufw:
+    state: enabled
+    policy: deny

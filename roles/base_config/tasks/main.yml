@@ -1,0 +1,12 @@
+---
+# tasks file for base_config
+
+- include: ssh_keys.yml
+- include: update_system.yml
+- include: conf_time.yml
+- include: conf_ssh.yml
+- include: conf_host.yml
+- include: conf_logrotate.yml
+- include: conf_firewall.yml
+- include: certificate_script.yml
+- include: lynis_suggestions.yml

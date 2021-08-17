@@ -1,0 +1,12 @@
+---
+
+# Add the ssh key of the ansible user to the managed node
+# so that they can log in via publickey authentication.
+# Note, that password login is disabled later in this role.
+- name: SSH-Copy-ID
+  authorized_key:
+    user: "{{ ansible_env.SUDO_USER }}"
+    state: present
+    # path to ssh public key on the ansible control node
+    # that should be transferred to the managed node
+    key: "{{ lookup('file', '/home/ansible-master/.ssh/id_rsa.pub') }}"

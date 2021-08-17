@@ -1,0 +1,18 @@
+---
+# This file contains security measures suggested by lynis audits.
+
+- name: disable core dumps
+  lineinfile:
+    path: /etc/security/limits.conf
+    line: '{{ item }}'
+    insertbefore: '^# End of file'
+  with_items:
+    - '* soft core 0'
+    - '* hard core 0'
+
+- name: install chkrootkit as malware scanner
+  apt:
+    name: chkrootkit
+    update_cache: yes
+    cache_valid_time: 3600
+    state: latest

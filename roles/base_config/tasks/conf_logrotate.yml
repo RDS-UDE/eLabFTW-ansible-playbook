@@ -1,0 +1,5 @@
+---
+- name: Copy logrotate template to keep logs only for 14 days
+  template:
+    src: logrotate.conf.template
+    dest: /etc/logrotate.conf

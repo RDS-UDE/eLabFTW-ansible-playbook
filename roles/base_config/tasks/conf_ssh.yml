@@ -1,0 +1,10 @@
+---
+# use the sshd_config template found in the templates
+# folder of the base_config role.
+# among other things, this prevents root login
+# and ssh login via password.
+- name: copy sshd_config.template
+  template:
+    src: sshd_config.template
+    dest: /etc/ssh/sshd_config
+  notify: restart sshd

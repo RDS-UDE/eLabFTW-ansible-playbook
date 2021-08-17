@@ -1,0 +1,16 @@
+---
+- name: Create cert folder for certificate
+  file:
+    path: '/home/{{ ansible_user }}/cert'
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
+    mode: '700'
+    state: directory
+
+- name: Copy certificate request script into the ansible-master/home folder
+  template:
+    src: dfn_certificate_request.sh
+    dest: '/home/{{ ansible_user }}/cert/certificate_request.sh'
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
+    mode: '700'

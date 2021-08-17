@@ -1,0 +1,11 @@
+---
+- name: Set fqdn as hostname
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}"
+
+# Further steps of this playbook require the hostname to be
+# the fqdn of the elabftw server, e.g. example.elab.com
+- name: Adapt /etc/hosts to use fqdn as hostname
+  template:
+    src: hosts.template
+    dest: /etc/hosts
