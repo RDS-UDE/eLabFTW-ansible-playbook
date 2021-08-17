@@ -1,0 +1,8 @@
+---
+- hosts: g_elabftw
+  become: yes
+  roles:
+      - base_config
+      - webserver
+      - mysql
+      - elabftw_install
