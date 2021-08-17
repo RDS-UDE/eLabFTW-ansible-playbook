@@ -1,0 +1,4 @@
+# These variables can be used to override the group variables for this node only,
+# e.g. if one node needs to remain on an older version while the rest is updated.
+# elab_version: 4.0.11
+# php_version: '8.0'

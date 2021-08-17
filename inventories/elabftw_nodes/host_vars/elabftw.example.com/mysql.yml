@@ -1,0 +1,24 @@
+---
+################################################################################
+#  WARNING: This file needs to be vaulted (encrypted) for use in production    #
+################################################################################
+
+# This file contains variables for mysql.
+# It contains secret information and MUST be encrypted before
+# you commit a version with actual secrets in here
+#
+# Use `ansible-vault encrypt mysql.yml` to encrypt the file
+# When running ansible use the --ask-vault-pass flag so
+# that ansible can decrupt this file.
+#
+# To edit this file after it is encrypted, use `ansible-vault edit mysql.yml`
+
+db_name: elabftw
+db_host: localhost
+db_collation: utf8mb4_0900_ai_ci
+db_encoding: utf8mb4
+db_user: elabftw
+db_port: 3306
+
+db_pass:  # TODO Set a new database password
+db_secret_key:  # TODO Generate a new secret key using https://demo.elabftw.net/install/generateSecretKey.php

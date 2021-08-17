@@ -1,0 +1,13 @@
+---
+# This file contains a list of all managed nodes know to this
+# ansible control node.
+
+# This denotes the host group `g_elabftw` containing all hosts
+# that should receive an elabftw installation
+g_elabftw:
+  hosts:
+    # TODO replace the key `elabftw.example.com` with your fqdn
+    elabftw.example.com:
+      # This defines the (ssh) user name ansible will use
+      # to connect to this node
+      ansible_user: ansible-master

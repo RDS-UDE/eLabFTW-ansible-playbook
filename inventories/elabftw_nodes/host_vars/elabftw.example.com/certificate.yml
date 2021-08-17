@@ -1,0 +1,14 @@
+---
+# TODO: If you plan on using a DFN certificate, fill out the following variables
+# which can be used to generate a secret key and certificate request using the
+# dfn_certificate_request.sh script placed on the managed node by the base_config role.
+# If you plan to use letsencrypt certificates, you can omit this step.
+
+# NOTE that if your host should be reachable by multiple URLs, e.g. elabftw.example.com and elabftw.long-example.com
+# you need to add a parameter to the script base_config/templates/dfn_certificate_request.sh
+cert_country: ""  # e.g. "DE"
+cert_state: ""  # e.g. "Nordrhein-Westfalen"
+cert_locality: ""  # e.g. "Essen"
+cert_organization: ""  # e.g. "Universitaet Duisburg-Essen"
+cert_organizational_unit: ""  # e.g. Universitaetsbibliothek, Rechenzentrum, ...
+cert_email: ""  # an email address which can be used to reach the person responsible for the server

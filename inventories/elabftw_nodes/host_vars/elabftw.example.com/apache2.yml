@@ -1,0 +1,9 @@
+---
+# Specify the file name of the SSL keys.
+# In this setup,, these files need to be stored in the folder
+# roles/webserver/files/ssl/
+# abd are usually named <fqdn>.cert.pem and <fqdn>.key.pem
+
+# TODO replace elabftw.example.com with you elab hostname
+apache2_sslCertFile: elabftw.example.com.cert.pem
+apache2_sslKeyFile: elabftw.example.com.key.pem

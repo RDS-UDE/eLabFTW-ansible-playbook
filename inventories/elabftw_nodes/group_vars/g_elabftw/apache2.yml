@@ -1,0 +1,4 @@
+---
+apache2_serverAdmin: admin@example.com  # TODO replace this with your name of choice
+apache2_documentRoot: /var/www/html/elabftw/web
+apache2_use_lets_encrypt: false  # set the to true if you want to use letsencrypt
