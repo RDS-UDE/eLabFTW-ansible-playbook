@@ -18,6 +18,8 @@ managed node when running the `base_config` role. It then needs to be manually e
 This script provides you with a certificate request that you can use to apply
 for a DFN certificate for your node.
 
+The file `chain.pem` is the DFN certificate chain available at: https://info.pca.dfn.de/dfn-ca-global-g2/
+
 Role Variables
 --------------
 
