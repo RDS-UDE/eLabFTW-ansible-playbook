@@ -1,0 +1,16 @@
+---
+- name: "Set uploads folder to be owned by www-data"
+  file:
+    path: /var/www/html/elabftw/uploads/
+    group: www-data
+    owner: www-data
+    mode: u=rwx
+    state: directory
+
+- name: "Set cache folder to be owned by www-data"
+  file:
+    path: /var/www/html/elabftw/cache/
+    group: www-data
+    owner: www-data
+    mode: u=rwx
+    state: directory

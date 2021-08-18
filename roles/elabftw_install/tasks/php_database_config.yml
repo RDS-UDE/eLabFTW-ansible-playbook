@@ -1,0 +1,27 @@
+---
+# Set up database connection, php config and manage database credentials
+
+# eLab specific PHP config and credentials
+# e.g. the database password.
+- name: Copy config.php template for php bin/start
+  template:
+    src: config.php.template
+    dest: /var/www/html/elabftw/config.php
+    mode: 0644
+
+- name: php bin/start
+  shell: "php bin/install start && touch /var/www/html/elabftw/php_start_done"
+  args:
+    chdir: /var/www/html/elabftw
+    # Creates a file to show that this task has been run.
+    # This file does not contain the elab version since this
+    # does not need to be rerun for an update.
+    creates: /var/www/html/elabftw/php_start_done
+
+- name: php bin/console update
+  shell: "php bin/console db:update && touch /var/www/html/elabftw/php_update_done_{{ elab_version }}"
+  args:
+    chdir: /var/www/html/elabftw
+    # Creates a file to show that this task has been run.
+    creates: "/var/www/html/elabftw/php_update_done_{{ elab_version }}"
+  notify: clear_cache

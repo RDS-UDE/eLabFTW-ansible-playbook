@@ -1,0 +1,33 @@
+---
+# Note that this requires the elab repo to be pulled/ cloned
+
+- name: Install composer package for elabftw < 4.x.x
+  apt:
+    name: composer
+    update_cache: yes
+    cache_valid_time: 3600
+    state: latest
+  when: elab_version is version('3', '>=') and elab_version is version('4', '<')
+
+- name: Uninstall composer apt package for elabftw >= 4.0.0
+  apt:
+    name: composer
+    update_cache: yes
+    cache_valid_time: 3600
+    state: absent
+  when: elab_version is version('4', '>=')
+
+- name: Download composer2 for elabftw4.x
+  get_url:
+    url: https://getcomposer.org/download/2.1.3/composer.phar
+    dest: /usr/local/bin/composer
+    checksum: "sha256:https://getcomposer.org/download/2.1.3/composer.phar.sha256sum"
+    mode: 500
+  when: elab_version is version('4', '>=')
+  register: composer_downloaded
+
+- name: Install php dependencies via composer
+  community.general.composer:
+    command: install
+    working_dir: /var/www/html/elabftw
+    no_dev: yes

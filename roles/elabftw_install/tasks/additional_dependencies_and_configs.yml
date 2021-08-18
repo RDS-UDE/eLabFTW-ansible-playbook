@@ -1,0 +1,38 @@
+---
+# required to allow language selection within elab
+- name: Make language packages available
+  community.general.locale_gen:
+    name: "{{ item }}"
+    state: present
+  # use loop because with-items conflicted with other built-in modules
+  loop:
+    - fr_FR.UTF-8
+    - de_DE.UTF-8
+    - en_GB.UTF-8
+  notify:
+    - restart apache2
+    - restart php-fpm
+
+- name: "Copy imagick policy template to make pdf uploads possible"
+  template:
+    src: imagick_policy.template
+    dest: /etc/ImageMagick-6/policy.xml
+  notify: restart php-fpm
+  when: elab_version is version('4', '>=')
+
+- name: "Install inkscape for rendering svgs"
+  apt:
+    name: inkscape
+    update_cache: yes
+    state: latest
+  when: elab_version is version('4', '>=')
+  notify: restart php-fpm
+
+# Java for timestamping
+# This will be used, when the coresponding php package is not present.
+- name: Install Java to allow timestamp if openssl is absent (failsafe)
+  apt:
+    name: default-jdk-headless
+    update_cache: yes
+    cache_valid_time: 3600
+    state: latest

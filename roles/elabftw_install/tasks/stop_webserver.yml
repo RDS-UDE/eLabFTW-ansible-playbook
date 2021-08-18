@@ -1,0 +1,13 @@
+---
+## Web server management
+
+- name: Check if a web server stop is required
+  register: webserver_stop_required
+  stat: path=/var/www/html/elabftw/php_update_done_{{ elab_version }} get_md5=no
+
+- name: Stop apache2
+  service:
+    name: apache2
+    state: stopped
+  when: webserver_stop_required.stat.exists == false
+  notify: webserver_start

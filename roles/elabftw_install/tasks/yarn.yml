@@ -1,0 +1,37 @@
+---
+# Yarn
+
+- name: Install Yarn apt-key
+  apt_key:
+    url: https://dl.yarnpkg.com/debian/pubkey.gpg
+    state: present
+
+- name: Add yarn repository
+  apt_repository:
+    repo: deb https://dl.yarnpkg.com/debian/ stable main
+    state: present
+    update_cache: yes
+
+- name: Install Yarn
+  apt:
+    name: yarn
+    update_cache: yes
+    cache_valid_time: 3600
+    state: latest
+
+# Yarn module always reports changed, even if nothing is changed.
+- name: Install packages based on package.json
+  become: yes
+  community.general.yarn:
+    path: /var/www/html/elabftw
+    state: latest
+
+- name: Yarn build
+  # Switched from command to shell to make && possible
+  become: yes
+  shell: "yarn buildall && touch /var/www/html/elabftw/yarn_build_done_{{ elab_version }}"
+  args:
+    chdir: /var/www/html/elabftw
+    # Create a file to show that this task has been run.
+    # Is contains the version since this has to be run for each (new) verison.
+    creates: "/var/www/html/elabftw/yarn_build_done_{{ elab_version }}"

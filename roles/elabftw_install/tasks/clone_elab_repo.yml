@@ -1,0 +1,8 @@
+---
+# eLabFTW
+- name: Clone eLabFTW GitHub repo
+  git:
+    repo: https://github.com/elabftw/elabftw.git
+    dest: /var/www/html/elabftw
+    version: "{{ elab_version }}"
+    depth: 1

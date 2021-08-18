@@ -1,0 +1,69 @@
+---
+# Configure web server, install PHP dependencies and 
+
+- name: Copy apache2 defaultssl template
+  template:
+    src: elab_apache_ssl_conf.template
+    dest: /etc/apache2/sites-available/default-ssl.conf
+    owner: www-data
+    group: www-data
+    mode: 0644
+  notify: restart apache2
+
+# NOTE: This step is necessary since currently (2021-08-16)
+# php8.0 is not available via the default repositories.
+# This step might become obsolete.
+- name: Add ppa from ondrej to make php8.0 possible on ubuntu
+  apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+  when: php_version == '8.0'
+
+- name: Install PHP packages
+  become: yes
+  apt:
+    name: "{{ php_packages[ php_version ] }}"
+    update_cache: yes
+    cache_valid_time: 3600  # update cache when it is older than 6 minutes
+    state: latest
+
+- name: Enable php-fpm conf
+  command: "a2enconf php{{ php_version }}-fpm"
+  args:
+    creates: "/etc/apache2/conf-enabled/php{{ php_version }}-fpm.conf"
+  notify: restart apache2
+
+- name: Copy php.ini template config
+  template:
+    src: "php{{ php_version }}.ini.template"
+    dest: "/etc/php/{{ php_version }}/fpm/php.ini"
+  notify: restart php-fpm
+
+# This task removes all packages that differ from the selected
+# php_version. It should only run if that variable is changed,
+# which should only happen very rarely and during major updates.
+- name: Remove older php packages
+  become: yes
+  apt:
+    name: "{{ php_packages[ item ] }}"
+    update_cache: yes
+    cache_valid_time: 3600  # update cache when it is older than 6 minutes
+    state: absent
+  # Remove the packages that do not match the current php_version
+  loop: "{{ [ '7.4','8.0' ] | difference( php_version ) }}"
+
+# As above
+- name: Disable unused php-fpm conf
+  command: "a2disconf php{{ item }}-fpm"
+  args:
+    removes: "/etc/apache2/conf-enabled/php{{ item }}-fpm.conf"
+  loop: "{{ [ '7.4','8.0' ] | difference( php_version ) }}"
+  notify: restart apache2
+
+# As above
+- name: removes the unused php.ini which is chosen by php_version
+  file:
+    path: "/etc/php/{{ item }}/fpm/php.ini"
+    state: absent
+  loop: "{{ [ '7.4','8.0' ] | difference( php_version ) }}"
+  notify: restart php-fpm

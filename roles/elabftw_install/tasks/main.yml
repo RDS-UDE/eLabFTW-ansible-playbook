@@ -1,0 +1,11 @@
+---
+# tasks file for elabftw_install
+- include: stop_webserver.yml
+- include: webserver_setup_config.yml
+- include: node_js.yml
+- include: clone_elab_repo.yml
+- include: composer.yml
+- include: yarn.yml
+- include: php_database_config.yml
+- include: set_folder_permissions.yml
+- include: additional_dependencies_and_configs.yml

@@ -1,0 +1,4 @@
+---
+# defaults file for elabftw_install
+php_post_max_size: 64M
+php_max_filesize: 20M
