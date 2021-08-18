@@ -1,0 +1,13 @@
+---
+- name: copy msysql dump skript
+  copy:
+    src: mysql.dump.sh.template
+    dest: /var/mysql.dump.sh
+    mode: a+x
+
+- name: creating crontab to run the mysql.dump.sh script
+  ansible.builtin.cron:
+    name: "mysql dump at 02:00"
+    minute: "0"
+    hour: "2"
+    job: "/var/mysql.dump.sh"

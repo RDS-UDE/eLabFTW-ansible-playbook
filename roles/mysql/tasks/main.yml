@@ -1,0 +1,32 @@
+---
+# tasks file for mysql
+
+- name: install mySQL
+  apt:
+    name: ["mysql-server", "python3-pymysql"]
+    update_cache: yes
+    cache_valid_time: 3600
+    state: latest
+
+- name: Create elabftw database
+  mysql_db:
+    name: "{{ db_name }}"
+    login_user: "root"
+    login_password: ""
+    login_host: "{{ db_host|default('localhost') }}"
+    login_unix_socket: "/var/run/mysqld/mysqld.sock"
+    collation: "{{ db_collation|default('utf8_unicode_ci') }}"
+    encoding: "{{ db_encoding|default('utf8') }}"
+    state: present
+
+# NOTE: This task always reports changed, even if nothing changed.
+- name: Grant user rights
+  mysql_user:
+    name: "{{ db_user }}"
+    host: "{{ db_host|default('localhost') }}"
+    login_unix_socket: "/var/run/mysqld/mysqld.sock"
+    password: "{{ db_pass }}"
+    priv: "*.*:ALL"    # needed to create mysql dump
+  no_log: true
+
+- include: mysql_dump.yml

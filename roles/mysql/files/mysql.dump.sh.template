@@ -1,0 +1,14 @@
+#!/bin/bash
+# Script to manage mysql database dumps
+
+# Stop webserver to prevent user interaction with the database
+systemctl stop apache2
+
+# Delete dumps older than three days.
+# To modify this, change the value of the -ctime parameter.
+find /var/backups/ -name '*.sql' -ctime +3 -exec rm -i {} \;
+
+# Create new dump
+mysqldump --single-transaction --host={{ db_host }} --user={{ db_user  }} --password='{{ db_pass  }}'  {{ db_name  }} >/var/backups/sqlbkp_`date +"%H:%M-%d.%m.%Y"`.sql
+
+systemctl start apache2
