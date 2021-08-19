@@ -3,6 +3,8 @@
   become: yes
   roles:
       - base_config
-      - webserver
-      - mysql
-      - elabftw_install
+      # TODO add the lines below after the base_config
+      # has been performed successfully once.
+      # - webserver
+      # - mysql
+      # - elabftw_install
